@@ -1,6 +1,6 @@
 'use strict';
 
-var traverse = require('../index');
+var traverse = require('../dist');
 var assert = require('assert');
 
 describe('json-schema-traverse', function() {
