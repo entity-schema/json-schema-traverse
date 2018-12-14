@@ -4,16 +4,16 @@ import {
 
 function traverse(
   schema: any,
+  options: TraverseOptions
+)
+function traverse(
+  schema: any,
   callback: TraverseCallback
 )
 function traverse(
   schema: any,
   options: TraverseLegacyOptions,
   callback: TraverseCallback
-)
-function traverse(
-  schema: any,
-  options: TraverseOptions
 )
 function traverse(
   schema: any,

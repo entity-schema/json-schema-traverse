@@ -1,6 +1,6 @@
 {
   "name": "@entity-schema/json-schema-traverse",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Traverse JSON Schema passing each schema object to callback",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
