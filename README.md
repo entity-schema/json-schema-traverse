@@ -1,22 +1,20 @@
 # json-schema-traverse
+
 Traverse JSON Schema passing each schema object to callback
 
-[![Build Status](https://travis-ci.org/epoberezkin/json-schema-traverse.svg?branch=master)](https://travis-ci.org/epoberezkin/json-schema-traverse)
-[![npm version](https://badge.fury.io/js/json-schema-traverse.svg)](https://www.npmjs.com/package/json-schema-traverse)
-[![Coverage Status](https://coveralls.io/repos/github/epoberezkin/json-schema-traverse/badge.svg?branch=master)](https://coveralls.io/github/epoberezkin/json-schema-traverse?branch=master)
-
+Converted to TypeScript from
+[epoberezkin/json-schema-traverse](https://github.com/epoberezkin/json-schema-traverse)
 
 ## Install
 
 ```
-npm install json-schema-traverse
+npm install @entity-schema/json-schema-traverse
 ```
-
 
 ## Usage
 
 ```javascript
-const traverse = require('json-schema-traverse');
+const traverse = require('@entity-schema/json-schema-traverse');
 const schema = {
   properties: {
     foo: {type: 'string'},
@@ -61,7 +59,7 @@ Callback is passed these parameters:
 ## Traverse objects in all unknown keywords
 
 ```javascript
-const traverse = require('json-schema-traverse');
+const traverse = require('@entity-schema/json-schema-traverse');
 const schema = {
   mySchema: {
     minimum: 1,

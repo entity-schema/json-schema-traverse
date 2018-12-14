@@ -64,33 +64,34 @@ traverse.skipKeywords = {
     minProperties: true
 };
 const _traverse = (opts, pre, post, schema, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex) => {
-    if (schema && typeof schema == 'object' && !Array.isArray(schema)) {
-        pre(schema, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
-        for (var key in schema) {
-            const subschema = schema[key];
-            if (Array.isArray(subschema)) {
-                if (key in traverse.arrayKeywords) {
-                    for (var i = 0; i < subschema.length; i++) {
-                        _traverse(opts, pre, post, subschema[i], `${jsonPtr}/${key}/${i}`, rootSchema, jsonPtr, key, schema, i);
-                    }
+    if (!isTraversable(schema))
+        return;
+    pre(schema, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
+    for (var key in schema) {
+        const subschema = schema[key];
+        if (Array.isArray(subschema)) {
+            if (key in traverse.arrayKeywords) {
+                for (var i = 0; i < subschema.length; i++) {
+                    _traverse(opts, pre, post, subschema[i], `${jsonPtr}/${key}/${i}`, rootSchema, jsonPtr, key, schema, i);
                 }
-            }
-            else if (key in traverse.propsKeywords) {
-                if (subschema && typeof subschema == 'object') {
-                    for (var prop in subschema) {
-                        _traverse(opts, pre, post, subschema[prop], `${jsonPtr}/${key}/${escapeJsonPtr(prop)}`, rootSchema, jsonPtr, key, schema, prop);
-                    }
-                }
-            }
-            else if (key in traverse.keywords ||
-                (opts.allKeys && !(key in traverse.skipKeywords))) {
-                _traverse(opts, pre, post, subschema, `${jsonPtr}/${key}`, rootSchema, jsonPtr, key, schema);
             }
         }
-        post(schema, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
+        else if (key in traverse.propsKeywords) {
+            if (subschema && typeof subschema == 'object') {
+                for (var prop in subschema) {
+                    _traverse(opts, pre, post, subschema[prop], `${jsonPtr}/${key}/${escapeJsonPtr(prop)}`, rootSchema, jsonPtr, key, schema, prop);
+                }
+            }
+        }
+        else if (key in traverse.keywords ||
+            (opts.allKeys && !(key in traverse.skipKeywords))) {
+            _traverse(opts, pre, post, subschema, `${jsonPtr}/${key}`, rootSchema, jsonPtr, key, schema);
+        }
     }
+    post(schema, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex);
 };
 const noop = () => { };
+const isTraversable = (schema) => schema && typeof schema == 'object' && !Array.isArray(schema);
 const isTraverseCallback = (value) => typeof value === 'function';
 const escapeJsonPtr = (str) => str.replace(/~/g, '~0').replace(/\//g, '~1');
 module.exports = traverse;

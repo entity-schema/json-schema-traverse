@@ -1,6 +1,6 @@
 {
-  "name": "json-schema-traverse",
-  "version": "0.4.2",
+  "name": "@entity-schema/json-schema-traverse",
+  "version": "0.5.0",
   "description": "Traverse JSON Schema passing each schema object to callback",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
@@ -11,25 +11,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/epoberezkin/json-schema-traverse.git"
+    "url": "git+https://github.com/entity-schema/json-schema-traverse.git"
   },
   "keywords": [
     "JSON-Schema",
     "traverse",
     "iterate"
   ],
-  "author": "Evgeny Poberezkin",
+  "author": "Nik Coughlin <nrkn.com@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/epoberezkin/json-schema-traverse/issues"
+    "url": "https://github.com/entity-schema/json-schema-traverse/issues"
   },
-  "homepage": "https://github.com/epoberezkin/json-schema-traverse#readme",
+  "homepage": "https://github.com/entity-schema/json-schema-traverse#readme",
   "devDependencies": {
     "@types/node": "^10.12.15",
-    "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
-    "pre-commit": "^1.2.2"
+    "nyc": "^13.1.0"
   },
   "nyc": {
     "exclude": [
