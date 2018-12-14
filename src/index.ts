@@ -4,7 +4,7 @@ import {
 
 function traverse(
   schema: any,
-  options: TraverseOptions
+  options: Partial<TraverseOptions>
 )
 function traverse(
   schema: any,
@@ -12,23 +12,25 @@ function traverse(
 )
 function traverse(
   schema: any,
-  options: TraverseLegacyOptions,
+  options: Partial<TraverseLegacyOptions>,
   callback: TraverseCallback
 )
 function traverse(
   schema: any,
-  optionsOrCallback: TraverseCallback | TraverseOptions | TraverseLegacyOptions,
+  optionsOrCallback: (
+    TraverseCallback | Partial<TraverseOptions> | Partial<TraverseLegacyOptions>
+  ),
   callback?: TraverseCallback
 ) {
   let pre: TraverseCallback = noop
   let post: TraverseCallback = noop
-  let opts: TraverseOptions | TraverseLegacyOptions = { cb: noop }
+  let opts: TraverseOptions | TraverseLegacyOptions = defaultOptions
 
   if ( isTraverseCallback( optionsOrCallback ) ){
     pre = optionsOrCallback
   } else if( isTraverseCallback( callback ) ){
     pre = callback
-    opts = optionsOrCallback
+    opts = Object.assign( {}, opts, optionsOrCallback )
   } else {
     const { cb } = <TraverseOptions>optionsOrCallback
 
@@ -39,54 +41,10 @@ function traverse(
       post = cb.post || noop
     }
 
-    opts = optionsOrCallback
+    opts = Object.assign( {}, opts, optionsOrCallback )
   }
 
   _traverse( opts, pre, post, schema, '', schema )
-}
-
-traverse.keywords = {
-  additionalItems: true,
-  items: true,
-  contains: true,
-  additionalProperties: true,
-  propertyNames: true,
-  not: true
-}
-
-traverse.arrayKeywords = {
-  items: true,
-  allOf: true,
-  anyOf: true,
-  oneOf: true
-}
-
-traverse.propsKeywords = {
-  definitions: true,
-  properties: true,
-  patternProperties: true,
-  dependencies: true
-}
-
-traverse.skipKeywords = {
-  default: true,
-  enum: true,
-  const: true,
-  required: true,
-  maximum: true,
-  minimum: true,
-  exclusiveMaximum: true,
-  exclusiveMinimum: true,
-  multipleOf: true,
-  maxLength: true,
-  minLength: true,
-  pattern: true,
-  format: true,
-  maxItems: true,
-  minItems: true,
-  uniqueItems: true,
-  maxProperties: true,
-  minProperties: true
 }
 
 const _traverse = (
@@ -99,6 +57,8 @@ const _traverse = (
 ) => {
   if ( !isTraversable( schema ) ) return
 
+  const { keywords, arrayKeywords, propsKeywords, skipKeywords } = opts
+
   pre(
     schema, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema,
     keyIndex
@@ -108,7 +68,7 @@ const _traverse = (
     const subschema = schema[ key ]
 
     if ( Array.isArray( subschema ) ) {
-      if ( key in traverse.arrayKeywords ) {
+      if ( key in arrayKeywords ) {
         for ( var i = 0; i < subschema.length; i++ ){
           _traverse(
             opts, pre, post, subschema[ i ],
@@ -117,7 +77,7 @@ const _traverse = (
           )
         }
       }
-    } else if ( key in traverse.propsKeywords ) {
+    } else if ( key in propsKeywords ) {
       if ( subschema && typeof subschema == 'object' ) {
         for ( var prop in subschema ){
           _traverse(
@@ -128,8 +88,8 @@ const _traverse = (
         }
       }
     } else if (
-      key in traverse.keywords ||
-      ( opts.allKeys && !( key in traverse.skipKeywords ) )
+      key in keywords ||
+      ( opts.allKeys && !( key in skipKeywords ) )
     ) {
       _traverse(
         opts, pre, post, subschema,
@@ -155,5 +115,56 @@ const isTraverseCallback = ( value ): value is TraverseCallback =>
 
 const escapeJsonPtr = ( str: string ) =>
   str.replace( /~/g, '~0' ).replace( /\//g, '~1' )
+
+const keywords = {
+  additionalItems: true,
+  items: true,
+  contains: true,
+  additionalProperties: true,
+  propertyNames: true,
+  not: true
+}
+
+const arrayKeywords = {
+  items: true,
+  allOf: true,
+  anyOf: true,
+  oneOf: true
+}
+
+const propsKeywords = {
+  definitions: true,
+  properties: true,
+  patternProperties: true,
+  dependencies: true
+}
+
+const skipKeywords = {
+  default: true,
+  enum: true,
+  const: true,
+  required: true,
+  maximum: true,
+  minimum: true,
+  exclusiveMaximum: true,
+  exclusiveMinimum: true,
+  multipleOf: true,
+  maxLength: true,
+  minLength: true,
+  pattern: true,
+  format: true,
+  maxItems: true,
+  minItems: true,
+  uniqueItems: true,
+  maxProperties: true,
+  minProperties: true
+}
+
+const defaultOptions: TraverseOptions = {
+  cb: noop,
+  allKeys: false,
+
+  keywords, arrayKeywords, propsKeywords, skipKeywords
+}
 
 export = traverse

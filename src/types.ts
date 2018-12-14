@@ -10,9 +10,17 @@ export interface TraversePrePost {
 }
 
 export interface TraverseLegacyOptions {
-  allKeys?: boolean
+  allKeys: boolean
+  keywords: TraverseKeyOptions
+  arrayKeywords: TraverseKeyOptions
+  propsKeywords: TraverseKeyOptions
+  skipKeywords: TraverseKeyOptions
 }
 
 export interface TraverseOptions extends TraverseLegacyOptions {
   cb: TraverseCallback | TraversePrePost
+}
+
+export interface TraverseKeyOptions {
+  [ name: string ]: boolean
 }
